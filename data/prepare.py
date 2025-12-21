@@ -9,7 +9,7 @@ from datasets import load_dataset # huggingface datasets
 
 # number of workers in .map() call
 # good number to use is ~order number of cpu cores // 2
-num_proc = 8
+num_proc = 12 #根据自己实际情况
 
 # number of workers in load_dataset() call
 # best number might be different from num_proc above as it also depends on NW speed.
@@ -18,14 +18,27 @@ num_proc_load_dataset = num_proc
 
 enc = tiktoken.get_encoding("gpt2")
 
+
+#因为文件比较大这里比较麻烦建议先下载好Skylion007/openwebtext数据集到本地，然后指定data_dir路径
+#可以考虑在命令行使用huggingface-cli下载,这样可支持断点续下载
+#至少需要保留100GB的磁盘空间用于缓存数据集和处理后的数据
 if __name__ == '__main__':
+    print("加载数据集...")
+    dataset = load_dataset(
+    "openwebtext", 
+    data_dir="../openwebtext",  #确保这个文件夹里有openwebtext.py文件和subsets文件夹,其中有20个tar文件
+    split='train',
+    cache_dir='./hf_cache', # 确保缓存到容量大的磁盘
+    num_proc=num_proc_load_dataset,
+    trust_remote_code=True
+)
     # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
-    dataset = load_dataset("openwebtext", num_proc=num_proc_load_dataset)
+    # dataset = load_dataset("text", data_files="../openwebtext/subsets/openwebtext/*.xz", split='train', num_proc=num_proc_load_dataset,cache_dir='./hf_cache')
 
     # owt by default only contains the 'train' split, so create a test split
-    split_dataset = dataset["train"].train_test_split(test_size=0.0005, seed=2357, shuffle=True)
+    split_dataset = dataset.train_test_split(test_size=0.0005, seed=2357, shuffle=True)
     split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
-
+    print(split_dataset)
     # this results in:
     # >>> split_dataset
     # DatasetDict({
@@ -46,7 +59,7 @@ if __name__ == '__main__':
         # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
         out = {'ids': ids, 'len': len(ids)}
         return out
-
+    print("开始分词...")
     # tokenize the dataset
     tokenized = split_dataset.map(
         process,
@@ -54,7 +67,7 @@ if __name__ == '__main__':
         desc="tokenizing the splits",
         num_proc=num_proc,
     )
-
+    print("开始存储数据...")
     # concatenate all the ids in each dataset into one large file we can use for training
     for split, dset in tokenized.items():
         arr_len = np.sum(dset['len'], dtype=np.uint64)

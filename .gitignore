@@ -1,1 +1,7 @@
 /__pycache__/
+*.bin
+*.pt
+*.pth
+*.zip
+*.tar.gz
+*.cfg

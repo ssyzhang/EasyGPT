@@ -16,7 +16,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 #一个decoder包括embedding，位置编码、多个block，归一化层，线性层
 #一个block包括3个部分 归一化层，多头注意力层，MLP层，整个GPT模型由多个block堆叠而成
-#归一化层
+
 
 class RMSNorm(nn.Module):
     """RMSNorm"""
@@ -29,17 +29,17 @@ class RMSNorm(nn.Module):
     def forward(self,x):
         output = self._norm(x.float()).type_as(x)
         return output*self.weight
+#不使用layernorm
+# class LayerNorm(nn.Module):
+#     """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
 
-class LayerNorm(nn.Module):
-    """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
+#     def __init__(self, ndim, bias):
+#         super().__init__()
+#         self.weight = nn.Parameter(torch.ones(ndim))
+#         self.bias = nn.Parameter(torch.zeros(ndim)) if bias else None
 
-    def __init__(self, ndim, bias):
-        super().__init__()
-        self.weight = nn.Parameter(torch.ones(ndim))
-        self.bias = nn.Parameter(torch.zeros(ndim)) if bias else None
-
-    def forward(self, input):
-        return F.layer_norm(input, self.weight.shape, self.weight, self.bias, 1e-5)
+#     def forward(self, input):
+#         return F.layer_norm(input, self.weight.shape, self.weight, self.bias, 1e-5)
 class RotaryEmbedding(nn.Module):
     def __init__(self, dim, max_position_embeddings=2048, base=10000):
         super().__init__()
@@ -370,7 +370,7 @@ class GPT(nn.Module):
         print(f"using fused AdamW: {use_fused}")
 
         return optimizer
-#硬核计算指标
+#mfu指标
 
     def estimate_mfu(self, fwdbwd_per_iter, dt):
         """ estimate model flops utilization (MFU) in units of A100 bfloat16 peak FLOPS """
@@ -385,7 +385,9 @@ class GPT(nn.Module):
         # express our flops throughput as ratio of A100 bfloat16 peak flops
         flops_achieved = flops_per_iter * (1.0/dt) # per second
         # flops_promised = 312e12 # A100 GPU bfloat16 peak flops is 312 TFLOPS
-        flops_promised=40e12# 4060laptop bfloat16 peak flops is 40 TFLOPS
+        # flops_promised=40e12# 4060laptop bfloat16 peak flops is 40 TFLOPS
+        flops_promised=71e12 #3090
+        # flops_promised=330e12 #4090
         mfu = flops_achieved / flops_promised
         return mfu
     

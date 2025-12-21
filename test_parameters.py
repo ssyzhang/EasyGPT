@@ -1,14 +1,14 @@
 
-from model import GPT,GPTConfig
-import torch.nn as nn
-config = GPTConfig()
+# from model import GPT,GPTConfig
+# import torch.nn as nn
+# config = GPTConfig()
 
-mymodel=GPT(config)
+# mymodel=GPT(config)
 
 
-num_config=mymodel.get_num_params()
+# num_config=mymodel.get_num_params()
 
-print("Number of parameters: %.2fM" % (num_config/1e6,))
+# print("Number of parameters: %.2fM" % (num_config/1e6,))
 
 
 
@@ -33,3 +33,6 @@ print("Number of parameters: %.2fM" % (num_config/1e6,))
 # num_test_params = test_model.get_num_params()
 # print(f"Number of parameters in test model: {num_test_params}")
 # test_model.show_params()
+
+import datasets
+dataset = datasets.load_dataset("Skylion007/openwebtext")
