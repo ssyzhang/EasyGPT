@@ -49,7 +49,7 @@ huggingface-cli download \
 python data/prepare.py
 ```
 完成数据集(包含20个tar文件)下载后运行prepare.py即可得到train.bin(17GB)和val.bin,注意磁盘应预留约100GB空间
-- 如下载遇困难可issues联系我获得[百度网盘分享](https://pan.baidu.com/s/1BumYWBCPZiL333kEpr516g?pwd=7xkx)直接下载train.bin和val.bin
+- 如下载遇困难可通过[百度网盘分享](https://pan.baidu.com/s/1BumYWBCPZiL333kEpr516g?pwd=7xkx)直接下载train.bin和val.bin
 
 ### Outcomes
 - 每个step为0.5m tokens,共运行15k步(成本有限),耗时90h,也可考虑将模型层数适当改小至12层.
