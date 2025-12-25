@@ -12,14 +12,15 @@ from model import GPTConfig, GPT
 # -----------------------------------------------------------------------------
 init_from = 'resume' # either 'resume' (from an out_dir) or a gpt2 variant (e.g. 'gpt2-xl')
 out_dir = './checkpoint' 
-file_name='ckpt_400.pt'   # ignored if init_from is not 'resume'
-start = "你好" # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
-num_samples = 10 # number of samples to draw
+file_name='ckpt_14800.pt'   # ignored if init_from is not 'resume'
+start = "FILE:learning.txt"  # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
+# start='\n'
+num_samples = 5 # number of samples to draw
 max_new_tokens = 500 # number of tokens generated in each sample
-temperature = 1 # 1.0 = no change, < 1.0 = less random, > 1.0 = more random, in predictions
-top_k = 200 # retain only the top_k most likely tokens, clamp others to have 0 probability
-top_p=0.9
-seed = 45
+temperature = 1.0# 1.0 = no change, < 1.0 = less random, > 1.0 = more random, in predictions
+top_k = 100 # retain only the top_k most likely tokens, clamp others to have 0 probability
+top_p=0.95
+seed = 42
 device = 'cuda' # examples: 'cpu', 'cuda', 'cuda:0', 'cuda:1', etc.
 dtype = 'bfloat16' if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else 'float16' # 'float32' or 'bfloat16' or 'float16'
 compile = True # use PyTorch 2.0 to compile the model to be faster
@@ -79,6 +80,7 @@ else:
 
 # encode the beginning of the prompt
 if start.startswith('FILE:'):
+    print(f"Loading prompt from {start[5:]}...")
     with open(start[5:], 'r', encoding='utf-8') as f:
         start = f.read()
 start_ids = encode(start)

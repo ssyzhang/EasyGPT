@@ -109,5 +109,4 @@ with torch.no_grad():
     if torch.equal(Y, pred_tokens):
         print("\n[PERFECT MATCH] The model perfectly memorized the batch.")
     else:
-        # 只要 loss 很低，偶尔错几个也没事
         print("\n[Match check] Almost perfect match (Loss is low enough).")
