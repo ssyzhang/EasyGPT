@@ -12,6 +12,18 @@
 
 ### Model Config
 - 采用24层transformer结构,改进了原GPT-2,加入了较新的**RMSNorm,RotaryEmbedding,SwiGLU,GQA**结构,总参数量为303m.
+
+| Attribute | Value |
+| :--- | :--- |
+| **Parameters** | **303 Million** (comparable to GPT-2 Medium) |
+| **Architecture** | GPT-2 (1024 context window, RoPE/Standard embeddings) |
+| **Dataset** | [OpenWebText](https://huggingface.co/datasets/Skylion007/openwebtext) (~17GB cleaned) |
+| **Tokenizer** | GPT-2 BPE (via `tiktoken`) |
+| **Training Steps** | 15,000 steps |
+| **Batch Size** | ~0.5M tokens per step (Gradient Accumulation) |
+| **Total Tokens** | ~7.3 Billion tokens |
+| **Final Val Loss** | **2.887** (PPL $\approx$ 18.0) |
+
 ```python
     max_position_embeddings: int = 1024
     vocab_size: int = 50304
