@@ -53,14 +53,13 @@ python train.py config/train_gpt.py
 - 建议先下载至本地再load_dataset
 - 可参考如下步骤(支持断点续下载)
 ```bash
-pip install huggingface-hub==0.23.4
+pip install huggingface_hub
 
 export HF_ENDPOINT=https://hf-mirror.com
 
-huggingface-cli download \
+hf download \
   Skylion007/openwebtext \
   --repo-type dataset \
-  --resume-download \
   --local-dir openwebtext
 
 python data/prepare.py
